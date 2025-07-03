@@ -26,10 +26,15 @@ python3 ensemble/test_harness.py
   ```
 
 ### 4. Run with Docker
+**For interactive CLI:**
 ```bash
-docker build -t eidolon:latest .
-docker run -v $(pwd)/models:/app/models eidolon:latest
+docker run -it -v $(pwd)/models:/app/models eidolon:latest
 ```
+**For batch mode (prompts from file):**
+```bash
+docker run -v $(pwd)/models:/app/models -v $(pwd)/prompts.txt:/app/prompts.txt eidolon:latest python -m ensemble.test_harness prompts.txt
+```
+> **Note:** If you run without `-it`, you may see `EOFError: EOF when reading a line` because there is no interactive terminal for `input()`. Use `-it` for interactive mode, or use batch mode with a prompt file.
 
 ### 5. Configuration
 - Edit `config.yaml` to specify model paths and llama.cpp location.
@@ -42,7 +47,10 @@ docker run -v $(pwd)/models:/app/models eidolon:latest
 - **llama.cpp not found:** Build llama.cpp and set the correct path in config or script.
 - **Out of memory:** Use smaller models or reduce the number of models in the ensemble.
 - **Permission denied:** Make sure `download_models.sh` is executable: `chmod +x download_models.sh`
-- **Docker issues:** Ensure you mount the `models/` directory as a volume.
+- **Docker issues:**
+  - Use `-it` for interactive CLI mode.
+  - For batch mode, mount your prompt file and pass it as an argument.
+  - If you see `EOFError: EOF when reading a line`, it means the container is not running interactively. Use `-it` or batch mode.
 
 ---
 

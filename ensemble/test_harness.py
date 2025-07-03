@@ -1,21 +1,30 @@
 import sys
 import os
 from pathlib import Path
+import yaml
 
-# Ensure relative imports work when running as a script
-sys.path.append(str(Path(__file__).parent))
-from base_model import LlamaCppModel
-from ensemble import LLMEnsemble
+from ensemble.base_model import LlamaCppModel
+from ensemble.ensemble import LLMEnsemble
 
-# Configurable model paths and llama.cpp path
-MODEL_PATHS = [
-    "models/mistral.gguf",
-    "models/phi2.gguf",
-    "models/tinyllama.gguf",
-    "models/qwen.gguf"
-]
-LLAMA_CPP_PATH = "llama.cpp/main"  # Adjust if llama.cpp is elsewhere
+# Load config from config.yaml if available
+CONFIG_PATH = Path(__file__).parent.parent / "config.yaml"
+def load_config():
+    if CONFIG_PATH.exists():
+        with open(CONFIG_PATH, 'r') as f:
+            config = yaml.safe_load(f)
+        llama_cpp_path = config.get('llama_cpp_path', 'llama.cpp/build/bin/main')
+        model_paths = config.get('models', [])
+        return llama_cpp_path, model_paths
+    else:
+        print("[WARN] config.yaml not found, using default paths.")
+        return "llama.cpp/build/bin/main", [
+            "models/mistral.gguf",
+            "models/phi2.gguf",
+            "models/tinyllama.gguf",
+            "models/qwen.gguf"
+        ]
 
+LLAMA_CPP_PATH, MODEL_PATHS = load_config()
 models = [LlamaCppModel(model_path=mp, llama_cpp_path=LLAMA_CPP_PATH) for mp in MODEL_PATHS if os.path.exists(mp)]
 ensemble = LLMEnsemble(models)
 
