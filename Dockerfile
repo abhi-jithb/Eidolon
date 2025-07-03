@@ -1,19 +1,24 @@
 FROM python:3.10-slim
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y build-essential wget git && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y build-essential cmake git wget && rm -rf /var/lib/apt/lists/*
 
 # Set workdir
 WORKDIR /app
 
-# Copy only code, not models
+# Clone and build llama.cpp
+RUN git clone https://github.com/ggerganov/llama.cpp.git && \
+    cd llama.cpp && \
+    make
+
+# Copy code and config (after building llama.cpp)
 COPY . /app
 
-# (Optional) Build llama.cpp if needed
-# RUN git clone https://github.com/ggerganov/llama.cpp && cd llama.cpp && make
+# Set llama_cpp_path in config.yaml to the correct location
+RUN sed -i 's|llama_cpp_path:.*|llama_cpp_path: llama.cpp/main|' /app/config.yaml || true
 
-# Install Python dependencies (add to requirements.txt as needed)
-# RUN pip install -r requirements.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Entrypoint (change as needed)
 CMD ["python", "ensemble/test_harness.py"]
