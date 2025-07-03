@@ -1,5 +1,51 @@
 # Eidolon: An Offline, Emotionally Intelligent AI Assistant
 
+## Quickstart (Ensemble System)
+
+### 1. Download Models
+Run:
+```bash
+./download_models.sh
+```
+Or see MODEL_DOWNLOAD_AND_SETUP.md for manual instructions.
+
+### 2. Build llama.cpp (if not using Docker)
+```bash
+git clone https://github.com/ggerganov/llama.cpp
+cd llama.cpp
+make
+```
+
+### 3. Run Ensemble (Manual)
+```bash
+python3 ensemble/test_harness.py
+```
+- Enter prompts interactively, or run with a text file of prompts:
+  ```bash
+  python3 ensemble/test_harness.py prompts.txt
+  ```
+
+### 4. Run with Docker
+```bash
+docker build -t eidolon:latest .
+docker run -v $(pwd)/models:/app/models eidolon:latest
+```
+
+### 5. Configuration
+- Edit `config.yaml` to specify model paths and llama.cpp location.
+- Add Python dependencies to `requirements.txt` as needed.
+
+---
+
+## Troubleshooting
+- **Model not found:** Ensure model files are in the `models/` directory and paths in config or script are correct.
+- **llama.cpp not found:** Build llama.cpp and set the correct path in config or script.
+- **Out of memory:** Use smaller models or reduce the number of models in the ensemble.
+- **Permission denied:** Make sure `download_models.sh` is executable: `chmod +x download_models.sh`
+- **Docker issues:** Ensure you mount the `models/` directory as a volume.
+
+---
+
 ## Project Vision
 Eidolon aims to be a fully offline, modular, and highly efficient AI assistant that can run on low-RAM devices (2–4 GB) including mobile phones and single-board computers. It will understand, converse, analyze emotions, learn from user interactions, and execute tasks—all while prioritizing privacy and resource efficiency.
 

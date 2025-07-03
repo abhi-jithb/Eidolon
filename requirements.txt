@@ -1,0 +1,3 @@
+# Eidolon Python requirements
+# Currently only standard library is used
+# Add dependencies here as needed (e.g., PyYAML, numpy, etc.) 

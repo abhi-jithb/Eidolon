@@ -1,0 +1,7 @@
+# Eidolon Ensemble Configuration Example
+llama_cpp_path: llama.cpp/main
+models:
+  - models/mistral.gguf
+  - models/phi2.gguf
+  - models/tinyllama.gguf
+  - models/qwen.gguf 
