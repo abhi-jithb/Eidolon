@@ -20,10 +20,9 @@ class LlamaCppModel:
                 "-m", self.model_path,
                 "-p", prompt,
                 "-n", str(max_tokens),
-                "--temp", str(temperature),
-                "--silent-prompt"
+                "--temp", str(temperature)
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
                 return result.stdout.strip()
             else:
